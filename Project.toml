@@ -1,0 +1,7 @@
+name = "EnvironmentGraph"
+uuid = "9696abe7-aa21-4a50-8512-71a31156fdc0"
+authors = ["KristofferC <kcarlsson89@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
