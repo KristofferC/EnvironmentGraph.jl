@@ -3,5 +3,14 @@ uuid = "9696abe7-aa21-4a50-8512-71a31156fdc0"
 authors = ["KristofferC <kcarlsson89@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"
+MetaGraphs = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+
 [compat]
+LightGraphs = "1.3"
+MetaGraphs = "0.6"
 julia = "1"
