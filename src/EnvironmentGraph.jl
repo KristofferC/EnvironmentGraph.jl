@@ -27,9 +27,13 @@ function environment_graph(env::String)
 
     for (uuid, pkg) in manifest.deps
         props = Dict(:name => pkg.name, :version => pkg.version, :uuid => uuid)
-        set_props!(g, d[pkg.uuid], props)
+        du = d[pkg.uuid]
+        set_props!(g, du, props)
         for (dep_name, uuid) in pkg.deps
-            add_edge!(g, d[pkg.uuid], d[uuid])
+            add_edge!(g, du, d[uuid])
+        end
+        isdefined(pkg, :weakdeps) && for (dep_name, uuid) in pkg.weakdeps
+            haskey(d, uuid) && add_edge!(g, du, d[uuid])
         end
     end
 
