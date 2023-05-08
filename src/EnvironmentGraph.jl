@@ -1,6 +1,6 @@
 module EnvironmentGraph
 
-using LightGraphs, MetaGraphs
+using Graphs, MetaGraphs
 using TOML
 using Pkg
 using UUIDs
@@ -23,7 +23,7 @@ function environment_graph(env::String)
         d[uuid] = i
     end
 
-    g = MetaDiGraph(LightGraphs.SimpleGraphs.SimpleDiGraph(n_deps))
+    g = MetaDiGraph(Graphs.SimpleGraphs.SimpleDiGraph(n_deps))
 
     for (uuid, pkg) in manifest.deps
         props = Dict(:name => pkg.name, :version => pkg.version, :uuid => uuid)
@@ -42,7 +42,7 @@ end
 
 print_cycles(g) = print_cycles(stdout, g)
 function print_cycles(io::IO, g)
-    cycles = LightGraphs.simplecycles(g)
+    cycles = Graphs.simplecycles(g)
     for c in cycles
         join(io, [props(g, p)[:name] for p in c], " -> ")
         print(io, "↫")
