@@ -6,6 +6,8 @@ using Pkg
 using UUIDs
 
 function environment_graph(env::String)
+    endswith(env, ".toml") && throw(ArgumentError("Provide the environment directory path not the Project or Manifest files"))
+    env = expanduser(env)
     manifest_file = joinpath(env, "Manifest.toml")
     if !isfile(manifest_file)
        error("expected a `Manifest.toml` file at $(abspath(env))")
