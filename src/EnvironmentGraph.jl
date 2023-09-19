@@ -14,14 +14,21 @@ function environment_graph(env::String)
     if !isfile(project_file)
         error("expected a `Project.toml` file at $(abspath(env))")
     end
+    project = Pkg.Types.read_project(project_file)
     manifest = Pkg.Types.read_manifest(manifest_file)
 
     # First we need to map UUIDs to integers
     # Start with normal dependencies
-    n_deps = length(manifest.deps)
     uuid_to_name = Dict{UUID, String}()
     d = Dict{UUID, Int}()
     i = 1
+
+    if project.name !== nothing
+        d[project.uuid] = i
+        uuid_to_name[project.uuid] = project.name
+        i += 1
+    end
+
     for (uuid, entry) in manifest.deps
         d[uuid] = i
         uuid_to_name[uuid] = entry.name
@@ -38,6 +45,15 @@ function environment_graph(env::String)
     end
 
     g = MetaDiGraph(Graphs.SimpleGraphs.SimpleDiGraph(i-1))
+
+    if project.name !== nothing
+        props = Dict(:label => project.name, :name => project.name, :version => project.version, :uuid => project.uuid, :extension => false)
+        du = d[project.uuid]
+        set_props!(g, du, props)
+        for (_, uuid) in project.deps
+            add_edge!(g, du, d[uuid])
+        end
+    end
 
     for (uuid, pkg) in manifest.deps
         props = Dict(:label => pkg.name, :name => pkg.name, :version => pkg.version, :uuid => uuid, :extension => false)
@@ -65,7 +81,7 @@ function environment_graph(env::String)
             du = d[uuid_ext]
             props = Dict(:label => ext, :name => ext, :version => nothing, :uuid => uuid_ext, :extension => true)
             set_props!(g, du, props)
-            add_edge!(g, du, d[pkg.uuid])
+            add_edge!(g, d[pkg.uuid], du)
             for trigger in triggers
                 uuid_trigger = pkg.weakdeps[trigger]
                 if haskey(d, uuid_trigger)
